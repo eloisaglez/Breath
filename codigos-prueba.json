@@ -1,0 +1,114 @@
+{
+  "codes": [
+    {
+      "code": "MARS-ABC123",
+      "points": 10,
+      "description": "Ejercicio de dureza Brinell"
+    },
+    {
+      "code": "MARS-DEF456",
+      "points": 10,
+      "description": "Ejercicio de dureza Vickers"
+    },
+    {
+      "code": "MARS-GHI789",
+      "points": 15,
+      "description": "Práctica de ensayo de tracción"
+    },
+    {
+      "code": "MARS-JKL012",
+      "points": 20,
+      "description": "Proyecto Arduino con sensor MQ-135"
+    },
+    {
+      "code": "MARS-MNO345",
+      "points": 5,
+      "description": "Tarea de casa - Propiedades térmicas"
+    },
+    {
+      "code": "MARS-PQR678",
+      "points": 25,
+      "description": "Análisis de materiales completo"
+    },
+    {
+      "code": "MARS-STU901",
+      "points": 10,
+      "description": "Ejercicio de conductividad eléctrica"
+    },
+    {
+      "code": "MARS-VWX234",
+      "points": 15,
+      "description": "Práctica de dilatación térmica"
+    },
+    {
+      "code": "MARS-YZA567",
+      "points": 30,
+      "description": "Proyecto final de trimestre"
+    },
+    {
+      "code": "MARS-BCD890",
+      "points": 10,
+      "description": "Cuestionario Moodle completado"
+    },
+    {
+      "code": "MARS-EFG123",
+      "points": 5,
+      "description": "Participación en clase"
+    },
+    {
+      "code": "MARS-HIJ456",
+      "points": 50,
+      "description": "Proyecto CanSat - Misión Marte"
+    },
+    {
+      "code": "MARS-KLM789",
+      "points": 20,
+      "description": "Informe de laboratorio"
+    },
+    {
+      "code": "MARS-NOP012",
+      "points": 15,
+      "description": "Ejercicios de tolerancias"
+    },
+    {
+      "code": "MARS-QRS345",
+      "points": 10,
+      "description": "Actividad de clasificación de materiales"
+    },
+    {
+      "code": "MARS-TUV678",
+      "points": 25,
+      "description": "Presentación oral de proyecto"
+    },
+    {
+      "code": "MARS-WXY901",
+      "points": 10,
+      "description": "Taller de soldadura"
+    },
+    {
+      "code": "MARS-ZAB234",
+      "points": 15,
+      "description": "Diseño 3D en TinkerCAD"
+    },
+    {
+      "code": "MARS-CDE567",
+      "points": 20,
+      "description": "Código Arduino funcional"
+    },
+    {
+      "code": "MARS-FGH890",
+      "points": 5,
+      "description": "Ayuda a compañero"
+    },
+    {
+      "code": "MARS-BONUS1",
+      "points": 50,
+      "description": "🎁 Código sorpresa de fin de mes"
+    },
+    {
+      "code": "MARS-EXTRA1",
+      "points": 100,
+      "description": "🏆 Logro especial - Mejor proyecto"
+    }
+  ]
+}
