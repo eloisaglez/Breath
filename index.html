@@ -273,6 +273,11 @@
     </script>
     
     <script>
+        // Función para normalizar el nombre del curso (reemplaza espacios por _ para usar en la clave de Firebase)
+        function normalizeCourseName(course) {
+            return course.replace(/\s/g, '_');
+        }
+
         // Convertir a mayúsculas automáticamente
         document.getElementById('codeInput').addEventListener('input', function(e) {
             e.target.value = e.target.value.toUpperCase();
@@ -295,18 +300,19 @@
         
         // Función para obtener los datos de la BD y, si no existen, inicializarlos
         async function getDataFromDB() {
+            // Intenta leer la base de datos
             const snapshot = await db.ref('/').once('value');
             let data = snapshot.val();
             
-            // Si la base de datos está vacía, la inicializamos
+            // Si la base de datos está vacía, la inicializamos con 0 puntos y sin códigos usados.
             if (!data || !data.courses || !data.usedCodes) {
                 data = {
                     courses: {
-                        '3º ESO A': 0,
-                        '3º ESO B': 0,
-                        '3º ESO C': 0,
-                        '3º ESO D': 0,
-                        '3º ESO E': 0
+                        '3º_ESO_A': 0,
+                        '3º_ESO_B': 0,
+                        '3º_ESO_C': 0,
+                        '3º_ESO_D': 0,
+                        '3º_ESO_E': 0
                     },
                     usedCodes: []
                 };
@@ -323,6 +329,7 @@
             const course = document.getElementById('courseSelect').value;
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
             const messageDiv = document.getElementById('message');
+            const courseKey = normalizeCourseName(course); // Curso normalizado para la clave de Firebase
             
             if (course === "") {
                 messageDiv.innerHTML = '<div class="message error">❌ Por favor, selecciona tu curso.</div>';
@@ -335,13 +342,13 @@
             try {
                 data = await getDataFromDB();
             } catch (error) {
-                messageDiv.innerHTML = '<div class="message error">❌ Error de conexión con la base de datos. Inténtalo de nuevo.</div>';
+                messageDiv.innerHTML = '<div class="message error">❌ Error de conexión con la base de datos. Inténtalo de nuevo. (Revisa las Reglas de Firebase)</div>';
                 console.error(error);
                 return;
             }
             
             // 2. Verificar si el código ya fue usado (en la BD)
-            if (data.usedCodes.includes(code)) {
+            if (data.usedCodes && data.usedCodes.includes(code)) {
                 messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado por alguien</div>';
                 setTimeout(() => messageDiv.innerHTML = '', 4000);
                 return;
@@ -358,14 +365,17 @@
             }
             
             // 4. Lógica para la ACUMULACIÓN y guardado en Firebase
-            const currentPoints = data.courses[course] || 0; // Puntos actuales del curso
+            
+            // Obtener puntos actuales usando la clave normalizada, asumiendo 0 si no existe
+            const currentPoints = data.courses[courseKey] || 0; 
             const newTotalPoints = currentPoints + codeObj.points; // Nuevo total
             
             try {
-                // Actualizar puntos del curso
-                await db.ref('courses/' + course.replace(/\s/g, '_')).set(newTotalPoints);
+                // Actualizar puntos del curso en Firebase (USANDO FIREBASE)
+                await db.ref('courses/' + courseKey).set(newTotalPoints);
                 
-                // Añadir código a la lista de códigos usados
+                // Añadir código a la lista de códigos usados (USANDO FIREBASE)
+                if (!data.usedCodes) data.usedCodes = [];
                 data.usedCodes.push(code);
                 await db.ref('usedCodes').set(data.usedCodes);
                 
