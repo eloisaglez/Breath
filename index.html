@@ -115,11 +115,6 @@
             transform: translateY(0);
         }
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
         .message {
             margin-top: 25px;
             padding: 20px;
@@ -141,12 +136,6 @@
             border: 3px solid #f44336;
             color: #ef9a9a;
             animation: shake 0.5s ease-out;
-        }
-
-        .loading {
-            background: rgba(33, 150, 243, 0.3);
-            border: 3px solid #2196f3;
-            color: #90caf9;
         }
 
         @keyframes slideIn {
@@ -209,24 +198,6 @@
                 padding: 25px;
             }
         }
-
-        .firebase-status {
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-
-        .firebase-status.connected {
-            background: rgba(76, 175, 80, 0.2);
-            color: #a5d6a7;
-        }
-
-        .firebase-status.disconnected {
-            background: rgba(244, 67, 54, 0.2);
-            color: #ef9a9a;
-        }
     </style>
 </head>
 <body>
@@ -234,7 +205,6 @@
         <header>
             <h1>🌬️ BREATH 💨</h1>
             <p class="subtitle">Ayuda a tu curso 3º ESO a conseguir más oxígeno</p>
-            <div id="firebaseStatus" class="firebase-status">Conectando...</div>
         </header>
 
         <div class="card">
@@ -258,12 +228,12 @@
                     <input 
                         type="text" 
                         id="codeInput" 
-                        placeholder="Ej: BREATH-AB1234" 
+                        placeholder="Ej: MARS-AB1234" 
                         required
                         style="text-transform: uppercase;">
                 </div>
 
-                <button type="submit" id="submitBtn">💨 Añadir Oxígeno</button>
+                <button type="submit">💨 Añadir Oxígeno</button>
             </form>
 
             <div id="message"></div>
@@ -282,15 +252,11 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ⚠️ REEMPLAZA ESTO CON TU CONFIGURACIÓN
-        // ============================================
+        // 2. Tu Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI",
             authDomain: "breath-8f51d.firebaseapp.com",
@@ -301,39 +267,12 @@
             appId: "1:115092733788:web:908339b70a0f8113318b99"
         };
 
-        // Inicializar Firebase
-        let db;
-        let isFirebaseConfigured = false;
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-            isFirebaseConfigured = true;
-            
-            // Verificar conexión
-            const connectedRef = db.ref('.info/connected');
-            connectedRef.on('value', (snap) => {
-                const statusDiv = document.getElementById('firebaseStatus');
-                if (snap.val() === true) {
-                    statusDiv.className = 'firebase-status connected';
-                    statusDiv.textContent = '🟢 Conectado a la nube';
-                } else {
-                    statusDiv.className = 'firebase-status disconnected';
-                    statusDiv.textContent = '🔴 Sin conexión';
-                }
-            });
-        } catch (error) {
-            console.warn('Firebase no configurado:', error.message);
-            const statusDiv = document.getElementById('firebaseStatus');
-            statusDiv.className = 'firebase-status disconnected';
-            statusDiv.textContent = '⚠️ Firebase no configurado - Usando modo local';
-            isFirebaseConfigured = false;
-        }
-
-        // ============================================
-        // FUNCIONES DE DATOS
-        // ============================================
-
+        // Inicializar Firebase y obtener la referencia a la base de datos
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+    </script>
+    
+    <script>
         // Convertir a mayúsculas automáticamente
         document.getElementById('codeInput').addEventListener('input', function(e) {
             e.target.value = e.target.value.toUpperCase();
@@ -353,63 +292,15 @@
                 return [];
             }
         }
-
-        // Obtener datos de Firebase o localStorage
-        async function getData() {
-            if (isFirebaseConfigured) {
-                try {
-                    const snapshot = await db.ref('breathData').once('value');
-                    const data = snapshot.val();
-                    
-                    if (!data) {
-                        // Inicializar datos si no existen
-                        const initialData = {
-                            courses: {
-                                '3º ESO A': 0,
-                                '3º ESO B': 0,
-                                '3º ESO C': 0,
-                                '3º ESO D': 0,
-                                '3º ESO E': 0
-                            },
-                            totalPoints: 0,
-                            usedCodes: []
-                        };
-                        await db.ref('breathData').set(initialData);
-                        return initialData;
-                    }
-                    
-                    return data;
-                } catch (error) {
-                    console.error('Error obteniendo datos de Firebase:', error);
-                    return getLocalData();
-                }
-            } else {
-                return getLocalData();
-            }
-        }
-
-        // Guardar datos en Firebase o localStorage
-        async function saveData(data) {
-            if (isFirebaseConfigured) {
-                try {
-                    await db.ref('breathData').set(data);
-                    return true;
-                } catch (error) {
-                    console.error('Error guardando en Firebase:', error);
-                    saveLocalData(data);
-                    return false;
-                }
-            } else {
-                saveLocalData(data);
-                return true;
-            }
-        }
-
-        // Funciones de respaldo con localStorage
-        function getLocalData() {
-            const data = localStorage.getItem('breathData');
-            if (!data) {
-                const initialData = {
+        
+        // Función para obtener los datos de la BD y, si no existen, inicializarlos
+        async function getDataFromDB() {
+            const snapshot = await db.ref('/').once('value');
+            let data = snapshot.val();
+            
+            // Si la base de datos está vacía, la inicializamos
+            if (!data || !data.courses || !data.usedCodes) {
+                data = {
                     courses: {
                         '3º ESO A': 0,
                         '3º ESO B': 0,
@@ -417,97 +308,93 @@
                         '3º ESO D': 0,
                         '3º ESO E': 0
                     },
-                    totalPoints: 0,
                     usedCodes: []
                 };
-                localStorage.setItem('breathData', JSON.stringify(initialData));
-                return initialData;
+                // Guardamos la estructura inicial en la BD
+                await db.ref('/').set(data);
             }
-            return JSON.parse(data);
-        }
-
-        function saveLocalData(data) {
-            localStorage.setItem('breathData', JSON.stringify(data));
+            return data;
         }
 
         // Procesar código
         document.getElementById('codeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const submitBtn = document.getElementById('submitBtn');
             const course = document.getElementById('courseSelect').value;
             const code = document.getElementById('codeInput').value.trim().toUpperCase();
             const messageDiv = document.getElementById('message');
             
-            // Deshabilitar botón mientras procesa
-            submitBtn.disabled = true;
-            messageDiv.innerHTML = '<div class="message loading">⏳ Procesando...</div>';
+            if (course === "") {
+                messageDiv.innerHTML = '<div class="message error">❌ Por favor, selecciona tu curso.</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            // 1. Cargar datos actuales de la BD
+            let data;
+            try {
+                data = await getDataFromDB();
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="message error">❌ Error de conexión con la base de datos. Inténtalo de nuevo.</div>';
+                console.error(error);
+                return;
+            }
+            
+            // 2. Verificar si el código ya fue usado (en la BD)
+            if (data.usedCodes.includes(code)) {
+                messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado por alguien</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            // 3. Cargar códigos válidos del JSON
+            const validCodes = await loadValidCodes();
+            const codeObj = validCodes.find(c => c.code === code);
+            
+            if (!codeObj) {
+                messageDiv.innerHTML = '<div class="message error">❌ Código inválido. Verifica que lo hayas escrito bien</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            // 4. Lógica para la ACUMULACIÓN y guardado en Firebase
+            const currentPoints = data.courses[course] || 0; // Puntos actuales del curso
+            const newTotalPoints = currentPoints + codeObj.points; // Nuevo total
             
             try {
-                // Obtener datos actuales
-                const data = await getData();
+                // Actualizar puntos del curso
+                await db.ref('courses/' + course.replace(/\s/g, '_')).set(newTotalPoints);
                 
-                // Verificar si el código ya fue usado
-                if (data.usedCodes.includes(code)) {
-                    messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado por alguien</div>';
-                    submitBtn.disabled = false;
-                    setTimeout(() => messageDiv.innerHTML = '', 4000);
-                    return;
-                }
-                
-                // Cargar códigos válidos
-                const validCodes = await loadValidCodes();
-                
-                // Buscar el código
-                const codeObj = validCodes.find(c => c.code === code);
-                
-                if (!codeObj) {
-                    messageDiv.innerHTML = '<div class="message error">❌ Código inválido. Verifica que lo hayas escrito bien</div>';
-                    submitBtn.disabled = false;
-                    setTimeout(() => messageDiv.innerHTML = '', 4000);
-                    return;
-                }
-                
-                // Añadir puntos
-                data.courses[course] += codeObj.points;
-                data.totalPoints += codeObj.points;
+                // Añadir código a la lista de códigos usados
                 data.usedCodes.push(code);
+                await db.ref('usedCodes').set(data.usedCodes);
                 
-                // Guardar datos
-                const saved = await saveData(data);
-                
-                if (saved || !isFirebaseConfigured) {
-                    messageDiv.innerHTML = `
-                        <div class="message success">
-                            ✅ ¡Excelente ${course}! 
-                            <br>Has ganado <strong>${codeObj.points} puntos</strong> de oxígeno
-                            <br><em>${codeObj.description}</em>
-                            ${!isFirebaseConfigured ? '<br><small>⚠️ Guardado en modo local</small>' : ''}
-                        </div>
-                    `;
-                } else {
-                    messageDiv.innerHTML = `
-                        <div class="message error">
-                            ❌ Error al guardar. Inténtalo de nuevo.
-                        </div>
-                    `;
-                }
-                
-                // Limpiar formulario
-                document.getElementById('codeInput').value = '';
-                document.getElementById('courseSelect').selectedIndex = 0;
-                
+                messageDiv.innerHTML = `
+                    <div class="message success">
+                        ✅ ¡Excelente ${course}! 
+                        <br>Has ganado <strong>${codeObj.points} puntos</strong> de oxígeno
+                        <br><em>${codeObj.description}</em>
+                    </div>
+                `;
+
             } catch (error) {
-                console.error('Error procesando código:', error);
-                messageDiv.innerHTML = '<div class="message error">❌ Error al procesar el código</div>';
-            } finally {
-                submitBtn.disabled = false;
-                // Ocultar mensaje después de 6 segundos
-                setTimeout(() => {
-                    messageDiv.innerHTML = '';
-                }, 6000);
+                messageDiv.innerHTML = '<div class="message error">❌ Error al guardar puntos en la nube.</div>';
+                console.error("Error de escritura en Firebase:", error);
+                return;
             }
+
+            // Limpiar formulario
+            document.getElementById('codeInput').value = '';
+            document.getElementById('courseSelect').selectedIndex = 0;
+            
+            // Ocultar mensaje después de 6 segundos
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 6000);
         });
+        
+        // Llama a la inicialización para asegurar que la estructura esté en Firebase
+        getDataFromDB(); 
     </script>
 </body>
 </html>
