@@ -365,6 +365,7 @@
         const db = firebase.database();
         
         // Cursos estáticos (se usan para ordenar y asegurar todos los tanques)
+        // Usamos el formato "3º ESO A" para mostrar, pero la clave en Firebase es "3º_ESO_A"
         const allCourses = ['3º ESO A', '3º ESO B', '3º ESO C', '3º ESO D', '3º ESO E'];
     </script>
     
@@ -386,30 +387,24 @@
         // Función principal que lee Firebase y actualiza la pantalla
         async function updateDisplay() {
             try {
-                // Leer todos los datos de la raíz de la BD
+                // Leer todos los datos de la raíz de la BD (USANDO FIREBASE)
                 const snapshot = await db.ref('/').once('value');
                 const data = snapshot.val() || {};
                 
                 // Extraer puntos de cursos y códigos usados
-                // Normalizamos los cursos para que usen un formato legible
+                // Normalizamos los cursos: la clave en Firebase usa '_' pero para mostrar usamos ' '
                 let coursePoints = {};
-                if (data.courses) {
-                    for (const key in data.courses) {
-                        // Reemplazamos el '_' por el espacio para el display
-                        const courseName = key.replace(/_/g, ' '); 
-                        coursePoints[courseName] = data.courses[key];
-                    }
-                }
+                
+                // Mapear los puntos de las claves normalizadas (3º_ESO_A) a nombres legibles (3º ESO A)
+                const firebaseCourses = data.courses || {};
+                allCourses.forEach(course => {
+                    const courseKey = course.replace(/\s/g, '_');
+                    // Si el punto no existe en Firebase, usamos 0
+                    coursePoints[course] = firebaseCourses[courseKey] || 0; 
+                });
 
                 const usedCodes = data.usedCodes || [];
                 
-                // Asegurar que todos los cursos estáticos estén en el objeto con 0 si no tienen puntos
-                allCourses.forEach(course => {
-                    if (coursePoints[course] === undefined) {
-                        coursePoints[course] = 0;
-                    }
-                });
-
                 // Calcular estadísticas globales
                 const totalPoints = Object.values(coursePoints).reduce((sum, points) => sum + points, 0);
                 
@@ -484,7 +479,8 @@
                 
             } catch (error) {
                 console.error("Error al obtener datos de Firebase:", error);
-                // Aquí podrías mostrar un mensaje de error en la pantalla si lo deseas
+                // Si hay un error, actualizamos la hora para que el usuario sepa que no está congelado
+                document.getElementById('lastUpdate').textContent = 'Error de conexión (' + new Date().toLocaleTimeString('es-ES') + ')';
             }
         }
 
