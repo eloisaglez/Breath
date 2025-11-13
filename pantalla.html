@@ -74,23 +74,6 @@
             color: #4ecdc4;
         }
 
-        .firebase-status {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 1em;
-        }
-
-        .firebase-status.connected {
-            background: rgba(76, 175, 80, 0.2);
-            color: #a5d6a7;
-        }
-
-        .firebase-status.disconnected {
-            background: rgba(244, 67, 54, 0.2);
-            color: #ef9a9a;
-        }
-
         .tanks-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -348,7 +331,6 @@
                     <div class="stat-value" id="globalProgress">0%</div>
                 </div>
             </div>
-            <div id="firebaseStatus" class="firebase-status">Conectando...</div>
         </header>
 
         <div class="tanks-grid" id="tanksGrid"></div>
@@ -363,15 +345,11 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ⚠️ REEMPLAZA ESTO CON TU CONFIGURACIÓN
-        // ============================================
+        // 2. Tu Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI",
             authDomain: "breath-8f51d.firebaseapp.com",
@@ -382,101 +360,22 @@
             appId: "1:115092733788:web:908339b70a0f8113318b99"
         };
 
-        // Inicializar Firebase
-        let db;
-        let isFirebaseConfigured = false;
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-            isFirebaseConfigured = true;
-            
-            // Verificar conexión
-            const connectedRef = db.ref('.info/connected');
-            connectedRef.on('value', (snap) => {
-                const statusDiv = document.getElementById('firebaseStatus');
-                if (snap.val() === true) {
-                    statusDiv.className = 'firebase-status connected';
-                    statusDiv.textContent = '🟢 Conectado - Actualizaciones en tiempo real';
-                } else {
-                    statusDiv.className = 'firebase-status disconnected';
-                    statusDiv.textContent = '🔴 Sin conexión';
-                }
-            });
-
-            // Escuchar cambios en tiempo real
-            db.ref('breathData').on('value', (snapshot) => {
-                updateDisplay();
-            });
-
-        } catch (error) {
-            console.warn('Firebase no configurado:', error.message);
-            const statusDiv = document.getElementById('firebaseStatus');
-            statusDiv.className = 'firebase-status disconnected';
-            statusDiv.textContent = '⚠️ Firebase no configurado - Usando modo local';
-            isFirebaseConfigured = false;
-            
-            // Sin Firebase, actualizar cada 3 segundos
-            setInterval(updateDisplay, 3000);
-        }
-
-        // ============================================
-        // FUNCIONES DE VISUALIZACIÓN
-        // ============================================
-
-        async function getData() {
-            if (isFirebaseConfigured) {
-                try {
-                    const snapshot = await db.ref('breathData').once('value');
-                    const data = snapshot.val();
-                    
-                    if (!data) {
-                        return {
-                            courses: {
-                                '3º ESO A': 0,
-                                '3º ESO B': 0,
-                                '3º ESO C': 0,
-                                '3º ESO D': 0,
-                                '3º ESO E': 0
-                            },
-                            totalPoints: 0,
-                            usedCodes: []
-                        };
-                    }
-                    
-                    return data;
-                } catch (error) {
-                    console.error('Error obteniendo datos de Firebase:', error);
-                    return getLocalData();
-                }
-            } else {
-                return getLocalData();
-            }
-        }
-
-        function getLocalData() {
-            const data = localStorage.getItem('breathData');
-            if (!data) {
-                return {
-                    courses: {
-                        '3º ESO A': 0,
-                        '3º ESO B': 0,
-                        '3º ESO C': 0,
-                        '3º ESO D': 0,
-                        '3º ESO E': 0
-                    },
-                    totalPoints: 0,
-                    usedCodes: []
-                };
-            }
-            return JSON.parse(data);
-        }
-
+        // Inicializar Firebase y obtener la referencia a la base de datos
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        // Cursos estáticos (se usan para ordenar y asegurar todos los tanques)
+        const allCourses = ['3º ESO A', '3º ESO B', '3º ESO C', '3º ESO D', '3º ESO E'];
+    </script>
+    
+    <script>
+        // Función de ayuda para la medalla
         function getMedal(index) {
             const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
             return medals[index] || '📊';
         }
 
+        // Función de ayuda para la clase CSS
         function getClass(index) {
             if (index === 0) return 'first';
             if (index === 1) return 'second';
@@ -484,87 +383,114 @@
             return '';
         }
 
+        // Función principal que lee Firebase y actualiza la pantalla
         async function updateDisplay() {
-            const data = await getData();
-            
-            // Actualizar estadísticas globales
-            document.getElementById('totalPoints').textContent = data.totalPoints;
-            document.getElementById('usedCodes').textContent = data.usedCodes.length;
-            
-            // Calcular progreso global (1000 puntos = 100%)
-            const globalProgress = Math.min(100, Math.floor((data.totalPoints / 1000) * 100));
-            document.getElementById('globalProgress').textContent = globalProgress + '%';
-            
-            // Ordenar cursos por puntos
-            const sortedCourses = Object.entries(data.courses).sort((a, b) => b[1] - a[1]);
-            
-            // Actualizar tanques
-            const tanksGrid = document.getElementById('tanksGrid');
-            tanksGrid.innerHTML = '';
-            
-            sortedCourses.forEach(([course, points], index) => {
-                const percentage = Math.min(100, Math.floor((points / 100) * 100));
-                const medal = getMedal(index);
-                const rankClass = getClass(index);
+            try {
+                // Leer todos los datos de la raíz de la BD
+                const snapshot = await db.ref('/').once('value');
+                const data = snapshot.val() || {};
                 
-                const tankCard = document.createElement('div');
-                tankCard.className = `tank-card ${rankClass}`;
-                tankCard.innerHTML = `
-                    <div class="medal">${medal}</div>
-                    <div class="course-name">${course}</div>
-                    <div class="tank-container">
-                        <div class="oxygen-fill" style="height: ${percentage}%">
-                            <span>${percentage}%</span>
-                        </div>
-                    </div>
-                    <div class="tank-stats">
-                        <div class="points">${points} pts</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percentage}%">
-                                ${percentage}%
+                // Extraer puntos de cursos y códigos usados
+                // Normalizamos los cursos para que usen un formato legible
+                let coursePoints = {};
+                if (data.courses) {
+                    for (const key in data.courses) {
+                        // Reemplazamos el '_' por el espacio para el display
+                        const courseName = key.replace(/_/g, ' '); 
+                        coursePoints[courseName] = data.courses[key];
+                    }
+                }
+
+                const usedCodes = data.usedCodes || [];
+                
+                // Asegurar que todos los cursos estáticos estén en el objeto con 0 si no tienen puntos
+                allCourses.forEach(course => {
+                    if (coursePoints[course] === undefined) {
+                        coursePoints[course] = 0;
+                    }
+                });
+
+                // Calcular estadísticas globales
+                const totalPoints = Object.values(coursePoints).reduce((sum, points) => sum + points, 0);
+                
+                document.getElementById('totalPoints').textContent = totalPoints;
+                document.getElementById('usedCodes').textContent = usedCodes.length;
+                
+                // Calcular progreso global (1000 puntos = 100%)
+                const globalProgress = Math.min(100, Math.floor((totalPoints / 1000) * 100));
+                document.getElementById('globalProgress').textContent = globalProgress + '%';
+                
+                // Ordenar cursos por puntos
+                const sortedCourses = Object.entries(coursePoints).sort((a, b) => b[1] - a[1]);
+                
+                // Actualizar tanques
+                const tanksGrid = document.getElementById('tanksGrid');
+                tanksGrid.innerHTML = '';
+                
+                sortedCourses.forEach(([course, points], index) => {
+                    const percentage = Math.min(100, Math.floor((points / 100) * 100));
+                    const medal = getMedal(index);
+                    const rankClass = getClass(index);
+                    
+                    const tankCard = document.createElement('div');
+                    tankCard.className = `tank-card ${rankClass}`;
+                    tankCard.innerHTML = `
+                        <div class="medal">${medal}</div>
+                        <div class="course-name">${course}</div>
+                        <div class="tank-container">
+                            <div class="oxygen-fill" style="height: ${percentage}%">
+                                <span>${percentage}%</span>
                             </div>
                         </div>
-                    </div>
-                `;
-                tanksGrid.appendChild(tankCard);
-            });
-            
-            // Actualizar ranking
-            const rankingList = document.getElementById('rankingList');
-            rankingList.innerHTML = '';
-            
-            sortedCourses.forEach(([course, points], index) => {
-                const rankClass = getClass(index);
-                const medal = getMedal(index);
-                const percentage = data.totalPoints > 0 ? Math.round((points / data.totalPoints) * 100) : 0;
+                        <div class="tank-stats">
+                            <div class="points">${points} pts</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%">
+                                    ${percentage}%
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    tanksGrid.appendChild(tankCard);
+                });
                 
-                const rankItem = document.createElement('div');
-                rankItem.className = `ranking-item ${rankClass}`;
-                rankItem.innerHTML = `
-                    <div class="ranking-left">
-                        <div class="rank-position">${medal}</div>
-                        <div class="rank-course">${course}</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div class="rank-points">${points} puntos</div>
-                        <div class="percentage">${percentage}% del total</div>
-                    </div>
-                `;
-                rankingList.appendChild(rankItem);
-            });
-            
-            // Actualizar hora
-            const now = new Date();
-            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('es-ES');
+                // Actualizar ranking
+                const rankingList = document.getElementById('rankingList');
+                rankingList.innerHTML = '';
+                
+                sortedCourses.forEach(([course, points], index) => {
+                    const rankClass = getClass(index);
+                    const medal = getMedal(index);
+                    const percentage = totalPoints > 0 ? Math.round((points / totalPoints) * 100) : 0;
+                    
+                    const rankItem = document.createElement('div');
+                    rankItem.className = `ranking-item ${rankClass}`;
+                    rankItem.innerHTML = `
+                        <div class="ranking-left">
+                            <div class="rank-position">${medal}</div>
+                            <div class="rank-course">${course}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="rank-points">${points} puntos</div>
+                            <div class="percentage">${percentage}% del total</div>
+                        </div>
+                    `;
+                    rankingList.appendChild(rankItem);
+                });
+                
+                // Actualizar hora
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('es-ES');
+                
+            } catch (error) {
+                console.error("Error al obtener datos de Firebase:", error);
+                // Aquí podrías mostrar un mensaje de error en la pantalla si lo deseas
+            }
         }
 
-        // Inicializar
+        // Actualizar cada 3 segundos
         updateDisplay();
-
-        // Si no está configurado Firebase, actualizar cada 3 segundos
-        if (!isFirebaseConfigured) {
-            setInterval(updateDisplay, 3000);
-        }
+        setInterval(updateDisplay, 3000);
     </script>
 </body>
 </html>
