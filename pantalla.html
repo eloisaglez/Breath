@@ -387,11 +387,6 @@
         let isFirebaseConfigured = false;
 
         try {
-            // Verificar si la configuración ha sido reemplazada
-            if (firebaseConfig.apiKey === "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI") {
-                throw new Error("Firebase no configurado");
-            }
-
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
             isFirebaseConfigured = true;
