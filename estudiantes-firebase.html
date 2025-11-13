@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breath - Estudiantes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a8dadc;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #a8dadc;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid #4ecdc4;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+            transform: scale(1.02);
+        }
+
+        select option {
+            background: #302b63;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 3px solid #4caf50;
+            color: #a5d6a7;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 3px solid #f44336;
+            color: #ef9a9a;
+            animation: shake 0.5s ease-out;
+        }
+
+        .loading {
+            background: rgba(33, 150, 243, 0.3);
+            border: 3px solid #2196f3;
+            color: #90caf9;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .info-box {
+            background: rgba(78, 205, 196, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 5px solid #4ecdc4;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+            color: #a8dadc;
+            font-size: 1em;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(78, 205, 196, 0.2);
+            border-radius: 10px;
+        }
+
+        .link a {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .link a:hover {
+            color: #ff6b6b;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+        }
+
+        .firebase-status {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+
+        .firebase-status.connected {
+            background: rgba(76, 175, 80, 0.2);
+            color: #a5d6a7;
+        }
+
+        .firebase-status.disconnected {
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef9a9a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌬️ BREATH 💨</h1>
+            <p class="subtitle">Ayuda a tu curso 3º ESO a conseguir más oxígeno</p>
+            <div id="firebaseStatus" class="firebase-status">Conectando...</div>
+        </header>
+
+        <div class="card">
+            <h2 style="color: #4ecdc4; margin-bottom: 25px; text-align: center;">Introduce tu código</h2>
+            
+            <form id="codeForm">
+                <div class="form-group">
+                    <label for="courseSelect">🎓 Selecciona tu curso:</label>
+                    <select id="courseSelect" required>
+                        <option value="">-- Elige tu curso --</option>
+                        <option value="3º ESO A">3º ESO A</option>
+                        <option value="3º ESO B">3º ESO B</option>
+                        <option value="3º ESO C">3º ESO C</option>
+                        <option value="3º ESO D">3º ESO D</option>
+                        <option value="3º ESO E">3º ESO E</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="codeInput">🔑 Código de tarea:</label>
+                    <input 
+                        type="text" 
+                        id="codeInput" 
+                        placeholder="Ej: BREATH-AB1234" 
+                        required
+                        style="text-transform: uppercase;">
+                </div>
+
+                <button type="submit" id="submitBtn">💨 Añadir Oxígeno</button>
+            </form>
+
+            <div id="message"></div>
+
+            <div class="info-box">
+                <p><strong>ℹ️ Cómo funciona:</strong></p>
+                <p>✅ Completa las tareas asignadas</p>
+                <p>✅ Recibe códigos de tus profesores</p>
+                <p>✅ Introduce el código aquí</p>
+                <p>✅ ¡Suma oxígeno para tu curso!</p>
+            </div>
+
+            <div class="link">
+                <a href="pantalla.html" target="_blank">👁️ Ver pantalla de puntuación</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ⚠️ REEMPLAZA ESTO CON TU CONFIGURACIÓN
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI",
+            authDomain: "breath-8f51d.firebaseapp.com",
+            databaseURL: "https://breath-8f51d-default-rtdb.firebaseio.com",
+            projectId: "breath-8f51d",
+            storageBucket: "breath-8f51d.firebasestorage.app",
+            messagingSenderId: "115092733788",
+            appId: "1:115092733788:web:908339b70a0f8113318b99"
+        };
+
+        // Inicializar Firebase
+        let db;
+        let isFirebaseConfigured = false;
+
+        try {
+            // Verificar si la configuración ha sido reemplazada
+            if (firebaseConfig.apiKey === "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI") {
+                throw new Error("Firebase no configurado");
+            }
+
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            isFirebaseConfigured = true;
+            
+            // Verificar conexión
+            const connectedRef = db.ref('.info/connected');
+            connectedRef.on('value', (snap) => {
+                const statusDiv = document.getElementById('firebaseStatus');
+                if (snap.val() === true) {
+                    statusDiv.className = 'firebase-status connected';
+                    statusDiv.textContent = '🟢 Conectado a la nube';
+                } else {
+                    statusDiv.className = 'firebase-status disconnected';
+                    statusDiv.textContent = '🔴 Sin conexión';
+                }
+            });
+        } catch (error) {
+            console.warn('Firebase no configurado:', error.message);
+            const statusDiv = document.getElementById('firebaseStatus');
+            statusDiv.className = 'firebase-status disconnected';
+            statusDiv.textContent = '⚠️ Firebase no configurado - Usando modo local';
+            isFirebaseConfigured = false;
+        }
+
+        // ============================================
+        // FUNCIONES DE DATOS
+        // ============================================
+
+        // Convertir a mayúsculas automáticamente
+        document.getElementById('codeInput').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Cargar códigos válidos desde el archivo JSON
+        async function loadValidCodes() {
+            try {
+                const response = await fetch('codigos.json');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo de códigos');
+                }
+                const data = await response.json();
+                return data.codes;
+            } catch (error) {
+                console.error('Error cargando códigos:', error);
+                return [];
+            }
+        }
+
+        // Obtener datos de Firebase o localStorage
+        async function getData() {
+            if (isFirebaseConfigured) {
+                try {
+                    const snapshot = await db.ref('breathData').once('value');
+                    const data = snapshot.val();
+                    
+                    if (!data) {
+                        // Inicializar datos si no existen
+                        const initialData = {
+                            courses: {
+                                '3º ESO A': 0,
+                                '3º ESO B': 0,
+                                '3º ESO C': 0,
+                                '3º ESO D': 0,
+                                '3º ESO E': 0
+                            },
+                            totalPoints: 0,
+                            usedCodes: []
+                        };
+                        await db.ref('breathData').set(initialData);
+                        return initialData;
+                    }
+                    
+                    return data;
+                } catch (error) {
+                    console.error('Error obteniendo datos de Firebase:', error);
+                    return getLocalData();
+                }
+            } else {
+                return getLocalData();
+            }
+        }
+
+        // Guardar datos en Firebase o localStorage
+        async function saveData(data) {
+            if (isFirebaseConfigured) {
+                try {
+                    await db.ref('breathData').set(data);
+                    return true;
+                } catch (error) {
+                    console.error('Error guardando en Firebase:', error);
+                    saveLocalData(data);
+                    return false;
+                }
+            } else {
+                saveLocalData(data);
+                return true;
+            }
+        }
+
+        // Funciones de respaldo con localStorage
+        function getLocalData() {
+            const data = localStorage.getItem('breathData');
+            if (!data) {
+                const initialData = {
+                    courses: {
+                        '3º ESO A': 0,
+                        '3º ESO B': 0,
+                        '3º ESO C': 0,
+                        '3º ESO D': 0,
+                        '3º ESO E': 0
+                    },
+                    totalPoints: 0,
+                    usedCodes: []
+                };
+                localStorage.setItem('breathData', JSON.stringify(initialData));
+                return initialData;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveLocalData(data) {
+            localStorage.setItem('breathData', JSON.stringify(data));
+        }
+
+        // Procesar código
+        document.getElementById('codeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const course = document.getElementById('courseSelect').value;
+            const code = document.getElementById('codeInput').value.trim().toUpperCase();
+            const messageDiv = document.getElementById('message');
+            
+            // Deshabilitar botón mientras procesa
+            submitBtn.disabled = true;
+            messageDiv.innerHTML = '<div class="message loading">⏳ Procesando...</div>';
+            
+            try {
+                // Obtener datos actuales
+                const data = await getData();
+                
+                // Verificar si el código ya fue usado
+                if (data.usedCodes.includes(code)) {
+                    messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado por alguien</div>';
+                    submitBtn.disabled = false;
+                    setTimeout(() => messageDiv.innerHTML = '', 4000);
+                    return;
+                }
+                
+                // Cargar códigos válidos
+                const validCodes = await loadValidCodes();
+                
+                // Buscar el código
+                const codeObj = validCodes.find(c => c.code === code);
+                
+                if (!codeObj) {
+                    messageDiv.innerHTML = '<div class="message error">❌ Código inválido. Verifica que lo hayas escrito bien</div>';
+                    submitBtn.disabled = false;
+                    setTimeout(() => messageDiv.innerHTML = '', 4000);
+                    return;
+                }
+                
+                // Añadir puntos
+                data.courses[course] += codeObj.points;
+                data.totalPoints += codeObj.points;
+                data.usedCodes.push(code);
+                
+                // Guardar datos
+                const saved = await saveData(data);
+                
+                if (saved || !isFirebaseConfigured) {
+                    messageDiv.innerHTML = `
+                        <div class="message success">
+                            ✅ ¡Excelente ${course}! 
+                            <br>Has ganado <strong>${codeObj.points} puntos</strong> de oxígeno
+                            <br><em>${codeObj.description}</em>
+                            ${!isFirebaseConfigured ? '<br><small>⚠️ Guardado en modo local</small>' : ''}
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message error">
+                            ❌ Error al guardar. Inténtalo de nuevo.
+                        </div>
+                    `;
+                }
+                
+                // Limpiar formulario
+                document.getElementById('codeInput').value = '';
+                document.getElementById('courseSelect').selectedIndex = 0;
+                
+            } catch (error) {
+                console.error('Error procesando código:', error);
+                messageDiv.innerHTML = '<div class="message error">❌ Error al procesar el código</div>';
+            } finally {
+                submitBtn.disabled = false;
+                // Ocultar mensaje después de 6 segundos
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 6000);
+            }
+        });
+    </script>
+</body>
+</html>
