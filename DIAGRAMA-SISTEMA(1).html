@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama del Sistema - Breath</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 40px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #667eea;
+            margin-top: 40px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .phase-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .phase-current {
+            background: #4CAF50;
+            color: white;
+        }
+        .phase-dev {
+            background: #FF9800;
+            color: white;
+        }
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .step.dev {
+            border-left: 5px solid #FF9800;
+            background: #fff8f0;
+        }
+        .step-num {
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .step-num.dev {
+            background: #FF9800;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .step-desc {
+            color: #666;
+            line-height: 1.6;
+        }
+        .actors {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .actor {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+        }
+        .actor-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .actor-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .actor-desc {
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .files {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .file {
+            background: #fff8e1;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ffc107;
+        }
+        .file.dev {
+            background: #fff3e0;
+            border: 2px solid #FF9800;
+        }
+        .file-name {
+            font-weight: bold;
+            color: #f57c00;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .file-desc {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        .warning-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border: 2px solid #2196F3;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        .info-box-title {
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .comparison-box {
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .comparison-current {
+            background: #e8f5e9;
+            border: 2px solid #4CAF50;
+        }
+        .comparison-future {
+            background: #fff3e0;
+            border: 2px solid #FF9800;
+        }
+        .comparison-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌬️ Sistema Breath - Diagrama de Funcionamiento</h1>
+        
+        <h2>👥 Actores del Sistema</h2>
+        <div class="actors">
+            <div class="actor">
+                <div class="actor-icon">👨‍🏫</div>
+                <div class="actor-title">PROFESORES</div>
+                <div class="actor-desc">Generan códigos únicos y deciden cuándo/cómo entregarlos a los alumnos.</div>
+            </div>
+            <div class="actor">
+                <div class="actor-icon">🎓</div>
+                <div class="actor-title">ESTUDIANTES</div>
+                <div class="actor-desc">Introducen códigos secretos para ganar puntos de oxígeno para su curso.</div>
+            </div>
+            <div class="actor">
+                <div class="actor-icon">📺</div>
+                <div class="actor-title">PANTALLAS</div>
+                <div class="actor-desc">Muestran en tiempo real los tanques de todos los cursos en competición.</div>
+            </div>
+        </div>
+
+        <h2>🔄 Comparación de Fases</h2>
+        <div class="comparison">
+            <div class="comparison-box comparison-current">
+                <div class="comparison-title">✅ Fase Actual (Funcional)</div>
+                <ul>
+                    <li>Generador offline (<code>generar-codigos.html</code>)</li>
+                    <li>Descarga manual de <code>codigos.json</code></li>
+                    <li>Subida manual a GitHub</li>
+                    <li>Firebase solo para puntos</li>
+                    <li>100% funcional y operativo</li>
+                </ul>
+            </div>
+            <div class="comparison-box comparison-future">
+                <div class="comparison-title">🚧 Fase 2 (En desarrollo)</div>
+                <ul>
+                    <li>Panel online con contraseña</li>
+                    <li>Todo automático en Firebase</li>
+                    <li>Sin archivos JSON manuales</li>
+                    <li>Actualización instantánea</li>
+                    <li>Acceso desde cualquier dispositivo</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>📋 FASE ACTUAL - Flujo de Trabajo <span class="phase-badge phase-current">OPERATIVO</span></h2>
+        <div class="flow">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <div class="step-title">Profesores crean códigos (OFFLINE)</div>
+                    <div class="step-desc">
+                        Abren <code>generar-codigos.html</code> en su ordenador local.
+                        Generan códigos con descripción y puntos (5-50 pts).
+                        Pueden crear códigos múltiples de una vez (ej: 30 códigos de 10 puntos).
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <div class="step-title">Descargar codigos.json</div>
+                    <div class="step-desc">
+                        Al terminar de crear códigos, hacen clic en "Descargar codigos.json".
+                        Obtienen un archivo JSON con TODOS los códigos válidos.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <div class="step-title">Subir a GitHub</div>
+                    <div class="step-desc">
+                        Suben (o actualizan) el archivo <code>codigos.json</code> a GitHub.
+                        Este archivo contiene todos los códigos válidos que los alumnos pueden usar.
+                        El archivo está "oculto" - no hay enlaces visibles a él en la web.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <div class="step-title">Distribuir códigos a los alumnos</div>
+                    <div class="step-desc">
+                        El profesor entrega los códigos cuando y como quiera:
+                        <br>📄 <strong>Físico:</strong> Tarjetas impresas, post-its, fichas
+                        <br>📧 <strong>Digital:</strong> Email, Classroom, Moodle
+                        <br>🎯 <strong>En clase:</strong> Proyectado, dictado, premio por tarea
+                        <br>🎁 <strong>Oculto:</strong> Dentro de ejercicios, como recompensa
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                    <div class="step-title">Alumnos introducen códigos</div>
+                    <div class="step-desc">
+                        Los alumnos acceden a <code>index.html</code> en la web.
+                        Seleccionan su curso (3º ESO A/B/C/D/E).
+                        Introducen el código que les dio el profesor.
+                        El sistema verifica contra <code>codigos.json</code> (carga automática en segundo plano).
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">6</div>
+                <div class="step-content">
+                    <div class="step-title">Validación y puntos</div>
+                    <div class="step-desc">
+                        Si el código es válido y NO ha sido usado: ✅ Suma puntos al curso en Firebase.
+                        Si el código ya fue usado: ❌ Mensaje de error.
+                        Si el código no existe: ❌ Mensaje de código inválido.
+                        Los datos se guardan en Firebase en tiempo real.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">7</div>
+                <div class="step-content">
+                    <div class="step-title">Visualización en pantallas</div>
+                    <div class="step-desc">
+                        <code>pantalla.html</code> muestra los tanques de oxígeno en tiempo real.
+                        Se actualiza automáticamente desde Firebase.
+                        Muestra ranking, porcentajes y estadísticas globales.
+                        Ideal para pantallas del centro en modo pantalla completa (F11).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🚀 FASE 2 - Flujo Futuro Automatizado <span class="phase-badge phase-dev">EN DESARROLLO</span></h2>
+        <div class="flow">
+            <div class="step dev">
+                <div class="step-num dev">1</div>
+                <div class="step-content">
+                    <div class="step-title">🔐 Acceso al panel de profesor</div>
+                    <div class="step-desc">
+                        El profesor accede a <code>panel-profesor.html</code> online.
+                        Introduce contraseña para acceso seguro.
+                        Puede acceder desde cualquier dispositivo con internet.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step dev">
+                <div class="step-num dev">2</div>
+                <div class="step-content">
+                    <div class="step-title">⚡ Crear códigos en tiempo real</div>
+                    <div class="step-desc">
+                        Crea códigos directamente en la web.
+                        Se guardan automáticamente en Firebase.
+                        Sin necesidad de descargar/subir archivos.
+                        Disponibles instantáneamente para los alumnos.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step dev">
+                <div class="step-num dev">3</div>
+                <div class="step-content">
+                    <div class="step-title">📊 Gestión y estadísticas</div>
+                    <div class="step-desc">
+                        Ve códigos activos/usados en tiempo real.
+                        Elimina códigos sobre la marcha si es necesario.
+                        Estadísticas de uso por curso.
+                        Todo sincronizado automáticamente.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step dev">
+                <div class="step-num dev">4</div>
+                <div class="step-content">
+                    <div class="step-title">🎯 Resto del flujo igual</div>
+                    <div class="step-desc">
+                        El profesor distribuye códigos como en Fase 1 (físico/digital).
+                        Los alumnos introducen códigos igual que antes.
+                        Las pantallas siguen mostrando tanques en tiempo real.
+                        <strong>La experiencia del alumno NO cambia.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-title">🔑 IMPORTANTE: Seguridad de códigos</div>
+            <div>
+                <p><strong>¿Los alumnos pueden ver codigos.json o la lista de códigos?</strong></p>
+                <p><strong>En ambas fases:</strong> Los alumnos NUNCA ven la lista de códigos.</p>
+                <ul>
+                    <li>✅ Solo ven una caja para introducir el código</li>
+                    <li>✅ No hay enlaces visibles a <code>codigos.json</code></li>
+                    <li>✅ Cada código solo se puede usar UNA vez</li>
+                    <li>✅ Solo los profesores tienen acceso al generador/panel</li>
+                    <li>✅ El profesor controla 100% la distribución</li>
+                </ul>
+                <p><strong>Fase 2 añade:</strong> Contraseña para acceder al panel de profesor.</p>
+            </div>
+        </div>
+
+        <h2>📁 Archivos del Sistema</h2>
+        <div class="files">
+            <div class="file">
+                <div class="file-name">📄 index.html</div>
+                <div class="file-desc">
+                    Interfaz para alumnos. Solo introducen código y curso.
+                    <br><strong>Subir a GitHub</strong>
+                    <br><span class="phase-badge phase-current">FASE 1 Y 2</span>
+                </div>
+            </div>
+
+            <div class="file">
+                <div class="file-name">📺 pantalla.html</div>
+                <div class="file-desc">
+                    Dashboard con todos los tanques. Competición en tiempo real.
+                    <br><strong>Subir a GitHub</strong>
+                    <br><span class="phase-badge phase-current">FASE 1 Y 2</span>
+                </div>
+            </div>
+
+            <div class="file">
+                <div class="file-name">🔧 generar-codigos.html</div>
+                <div class="file-desc">
+                    Herramienta offline para generar códigos y JSON.
+                    <br><strong>NO subir a GitHub</strong> - Solo uso local
+                    <br><span class="phase-badge phase-current">FASE 1</span>
+                </div>
+            </div>
+
+            <div class="file">
+                <div class="file-name">🔑 codigos.json</div>
+                <div class="file-desc">
+                    Base de datos de códigos válidos (generada por herramienta).
+                    <br><strong>Subir a GitHub</strong>
+                    <br><span class="phase-badge phase-current">FASE 1</span>
+                </div>
+            </div>
+
+            <div class="file dev">
+                <div class="file-name">🔐 panel-profesor.html</div>
+                <div class="file-desc">
+                    Panel online con contraseña para gestión de códigos.
+                    <br><strong>Subir a GitHub</strong> - Protegido con password
+                    <br><span class="phase-badge phase-dev">FASE 2</span>
+                </div>
+            </div>
+
+            <div class="file dev">
+                <div class="file-name">🔥 Firebase</div>
+                <div class="file-desc">
+                    Reemplaza <code>codigos.json</code>. Todo online y automático.
+                    <br><strong>Configuración en la nube</strong>
+                    <br><span class="phase-badge phase-dev">FASE 2</span>
+                </div>
+            </div>
+        </div>
+
+        <h2>🔄 Actualizar códigos</h2>
+        <div style="background: #f3e5f5; padding: 20px; border-radius: 10px; margin-top: 20px;">
+            <p><strong>FASE 1 - Añadir más códigos después de publicar:</strong></p>
+            <ol>
+                <li>Descarga el <code>codigos.json</code> actual de GitHub</li>
+                <li>Abre <code>generar-codigos.html</code> en tu ordenador</li>
+                <li>Haz clic en "Cargar códigos desde archivo"</li>
+                <li>Carga el JSON que descargaste</li>
+                <li>Añade los nuevos códigos</li>
+                <li>Descarga el JSON actualizado</li>
+                <li>Sube el nuevo archivo a GitHub (reemplaza el anterior)</li>
+            </ol>
+            
+            <p><strong>FASE 2 - Añadir códigos (futuro):</strong></p>
+            <ol>
+                <li>Accede al panel de profesor online</li>
+                <li>Introduce contraseña</li>
+                <li>Crea nuevos códigos</li>
+                <li>¡Listo! Automáticamente disponibles</li>
+            </ol>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 15px; color: white;">
+            <h2 style="color: white;">🚀 ¡Sistema Breath operativo!</h2>
+            <p style="font-size: 1.2em;">Fase 1 está lista para usar. Fase 2 mejorará la experiencia del profesor 🌬️</p>
+        </div>
+    </div>
+</body>
+</html>
