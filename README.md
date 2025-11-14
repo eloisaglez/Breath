@@ -38,7 +38,7 @@ breath/
 ├── generar-codigos.html          # Herramienta offline para generar códigos
 ├── panel-profesor.html           # 🚧 Panel online (en desarrollo - Fase 2)
 ├── codigos.json                  # Base de datos de códigos válidos
-└── Configuracion-firebase.md     # Guía de instalación
+└── CONFIGURACION-FIREBASE.md     # Guía de instalación
 ```
 
 ## 💻 Uso
@@ -84,7 +84,7 @@ En el futuro podrás:
 
 Para instalar y configurar Breath en tu propio entorno, consulta la guía completa:
 
-📋 **[Ver guía de configuración de Firebase](Configuracion-firebase.md)**
+📋 **[Ver guía de configuración de Firebase](CONFIGUARACION-FIREBASE.md)**
 
 La configuración toma aproximadamente 10-15 minutos y es completamente gratuita.
 
