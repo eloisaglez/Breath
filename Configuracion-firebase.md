@@ -3,12 +3,9 @@
 ## 🎯 ¿Qué vas a conseguir?
 
 Después de seguir esta guía (10-15 minutos), tendrás:
-- ✅ Los datos guardados en la nube (Firebase) para siempre
+- ✅ Los datos guardados en la nube (Firebase) 
 - ✅ Actualizaciones en tiempo real en todas las pantallas
 - ✅ Funciona desde cualquier ordenador/navegador
-- ✅ Los puntos NUNCA se pierden
-- ✅ **100% GRATIS**
-
 ---
 
 ## 📋 PASO 1: Crear cuenta en Firebase (2 minutos)
@@ -51,7 +48,7 @@ Nombre: breath
 
 ---
 
-## 📋 PASO 3: Configurar Realtime Database (3 minutos)
+## 📋 PASO 3: Configurar Realtime Database 
 
 ### 1. En el menú lateral izquierdo
 - Busca **"Compilación"** o **"Build"**
@@ -80,7 +77,7 @@ Nombre: breath
 
 ---
 
-## 📋 PASO 4: Obtener configuración (2 minutos)
+## 📋 PASO 4: Obtener configuración 
 
 ### 1. Volver a inicio del proyecto
 - En el menú lateral, haz clic en **⚙️ (engranaje)** arriba
@@ -113,7 +110,7 @@ Verás un bloque de código que empieza con `const firebaseConfig = {` y contien
 
 ---
 
-## 📋 PASO 5: Configurar reglas de seguridad (2 minutos)
+## 📋 PASO 5: Configurar reglas de seguridad 
 
 **Importante:** Para que funcione, necesitas configurar las reglas.
 
@@ -150,7 +147,7 @@ Verás un bloque de código que empieza con `const firebaseConfig = {` y contien
 
 ---
 
-## 📋 PASO 6: Configurar los archivos HTML (5 minutos)
+## 📋 PASO 6: Configurar los archivos HTML 
 
 Ahora vamos a poner tu configuración de Firebase en los archivos HTML.
 
@@ -181,8 +178,7 @@ Pega la configuración completa que copiaste en el **Paso 4** (sustituyendo todo
 
 ---
 
-## 📋 PASO 7: Subir a GitHub (3 minutos)
-
+## 📋 PASO 7: Subir a GitHub 
 ### 1. Verifica los nombres de archivo
 Asegúrate de que tus archivos se llamen exactamente:
 - `index.html`
@@ -199,7 +195,7 @@ Asegúrate de que tus archivos se llamen exactamente:
 
 ---
 
-## 📋 PASO 8: ¡PROBAR! (2 minutos)
+## 📋 PASO 8: ¡PROBAR! 
 
 ### 1. Abre tu página de estudiantes
 ```
@@ -359,4 +355,4 @@ Si algo no funciona:
 
 **Tiempo total:** 10-15 minutos  
 **Dificultad:** Fácil (copiar/pegar)  
-**Coste:** $0.00 (Gratis para siempre)
+**Coste:** $0.00 
