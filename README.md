@@ -1,8 +1,8 @@
-# 🌬️ Breath - Sistema de Gamificación Educativa
+# 🌬️ Breathe - Sistema de Gamificación Educativa
 
 ## 📖 ¿Qué es Breath?
 
-**Breath** es un sistema de gamificación educativa que visualiza el progreso de los estudiantes mediante tanques de oxígeno que se van llenando conforme ganan puntos en clase. Es una herramienta motivadora y visualmente atractiva para fomentar la participación y el esfuerzo en el aula.
+**Breathe** es un sistema de gamificación educativa que visualiza el progreso de los estudiantes mediante tanques de oxígeno que se van llenando conforme ganan puntos en clase. Es una herramienta motivadora y visualmente atractiva para fomentar la participación y el esfuerzo en el aula.
 
 ## ✨ Características
 
@@ -32,7 +32,7 @@
 ## 🚀 Estructura del proyecto
 
 ```
-breath/
+breathe/
 ├── index.html                    # Página para que los alumnos introduzcan códigos
 ├── pantalla.html                 # Pantalla de visualización para proyectar
 ├── generar-codigos.html          # Herramienta offline para generar códigos
