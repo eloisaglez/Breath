@@ -270,6 +270,13 @@
         }
 
         @media (max-width: 1100px) {
+            /* Permitir scroll en tablets y móviles */
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+            
             .tanks-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -352,31 +359,6 @@
                 font-size: 1.8em;
             }
 
-            .ranking {
-                padding: 20px;
-            }
-
-            .ranking h2 {
-                font-size: 1.5em;
-            }
-
-            .rank-position {
-                font-size: 1.5em;
-                min-width: 40px;
-            }
-
-            .rank-course {
-                font-size: 1.2em;
-            }
-
-            .rank-points {
-                font-size: 1.3em;
-            }
-
-            .ranking-item {
-                padding: 15px;
-            }
-
             .container {
                 padding: 0 10px;
             }
@@ -441,38 +423,6 @@
 
             .progress-text {
                 font-size: 0.9em;
-            }
-
-            .ranking {
-                padding: 15px;
-            }
-
-            .ranking h2 {
-                font-size: 1.3em;
-                margin-bottom: 15px;
-            }
-
-            .ranking-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-                padding: 15px;
-            }
-
-            .ranking-left {
-                gap: 15px;
-            }
-
-            .rank-position {
-                font-size: 1.8em;
-            }
-
-            .rank-course {
-                font-size: 1.1em;
-            }
-
-            .rank-points {
-                font-size: 1.5em;
             }
 
             .last-update {
