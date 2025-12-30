@@ -15,10 +15,19 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0a0015, #1a0b3d, #2d1560, #4a1a80);
             color: white;
-            height: 100vh;
+            min-height: 100vh;
             padding: 12px;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             position: relative;
+        }
+
+        /* Sin scroll en pantallas grandes (proyector) */
+        @media (min-width: 1400px) {
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
         }
 
         body::before {
@@ -270,13 +279,6 @@
         }
 
         @media (max-width: 1100px) {
-            /* Permitir scroll en tablets y móviles */
-            body {
-                height: auto;
-                min-height: 100vh;
-                overflow-y: auto;
-            }
-            
             .tanks-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
