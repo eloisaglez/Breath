@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathe - Pantalla de Puntuación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0015, #1a0b3d, #2d1560, #4a1a80);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(138, 43, 226, 0.2), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(255, 20, 147, 0.1), transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+        }
+
+        .mars-icon {
+            width: 60px;
+            height: 60px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 15px;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 74, 0.6));
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(74, 26, 128, 0.5);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
+            border: 3px solid rgba(255, 140, 100, 0.4);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff8c00, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+            letter-spacing: 6px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { 
+                filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.6));
+            }
+            to { 
+                filter: drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+            }
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #5dade2;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(93, 173, 226, 0.6);
+        }
+
+        /* TARJETAS DE ESTADÍSTICAS MEJORADAS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(74, 26, 128, 0.5);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 3px solid;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(138, 43, 226, 0.5);
+        }
+
+        .stat-card.total {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+        }
+
+        .stat-card.codes {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.15);
+        }
+
+        .stat-card.progress {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.15);
+        }
+
+        .stat-card.leader {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .stat-card h3 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stat-card .number {
+            font-size: 3.5em;
+            font-weight: bold;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .stat-card.total .number { color: #2ecc71; }
+        .stat-card.codes .number { color: #e74c3c; }
+        .stat-card.progress .number { color: #f39c12; }
+        .stat-card.leader .number { 
+            color: #00d4ff; 
+            font-size: 2em;
+        }
+
+        .stat-card .icon {
+            font-size: 2.5em;
+            margin-top: 10px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        .stat-card .subtitle-text {
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* CONTENIDO PRINCIPAL EN DOS COLUMNAS */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* SECCIÓN DE TANQUES */
+        .tanks-section {
+            background: rgba(74, 26, 128, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(138, 43, 226, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .tanks-section h2 {
+            color: #00d4ff;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .tanks-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .tank-card {
+            background: rgba(10, 0, 21, 0.6);
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s;
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            position: relative;
+        }
+
+        .tank-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+            border-color: #00d4ff;
+        }
+
+        .tank-card.first {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .tank-card.second {
+            border-color: #c0c0c0;
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+        }
+
+        .tank-card.third {
+            border-color: #cd7f32;
+            box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
+        }
+
+        .medal {
+            font-size: 2em;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+        }
+
+        .course-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ff1493;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        }
+
+        .tank-container {
+            position: relative;
+            width: 120px;
+            height: 180px;
+            border: 4px solid #00d4ff;
+            border-radius: 12px;
+            background: rgba(10, 0, 21, 0.9);
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3),
+                        inset 0 0 15px rgba(0, 0, 0, 0.7);
+            margin: 15px 0;
+        }
+
+        .oxygen-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(180deg, #00bfff, #00d4ff, #5dd9ff);
+            transition: height 1s ease-in-out;
+            box-shadow: 0 -5px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .tank-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 
+                0 0 15px rgba(0, 0, 0, 1),
+                0 0 5px rgba(0, 212, 255, 1);
+            z-index: 10;
+        }
+
+        .tank-points {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        /* SECCIÓN DE RANKING */
+        .ranking-section {
+            background: rgba(74, 26, 128, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(138, 43, 226, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ranking-section h2 {
+            color: #ffd700;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .ranking-item {
+            background: rgba(10, 0, 21, 0.5);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border: 2px solid rgba(138, 43, 226, 0.5);
+        }
+
+        .ranking-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+            border-color: #00d4ff;
+        }
+
+        .ranking-item.first {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .ranking-item.second {
+            border-color: #c0c0c0;
+            background: rgba(192, 192, 192, 0.1);
+        }
+
+        .ranking-item.third {
+            border-color: #cd7f32;
+            background: rgba(205, 127, 50, 0.1);
+        }
+
+        .ranking-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .rank-position {
+            font-size: 2em;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+        }
+
+        .rank-course {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ff1493;
+            text-shadow: 0 0 8px rgba(255, 20, 147, 0.5);
+        }
+
+        .rank-points {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+        }
+
+        .percentage {
+            font-size: 0.9em;
+            color: #5dade2;
+            margin-top: 5px;
+        }
+
+        /* GRÁFICA DE BARRAS */
+        .chart-section {
+            background: rgba(74, 26, 128, 0.4);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(138, 43, 226, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .chart-section h2 {
+            color: #00d4ff;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .chart-container {
+            height: 400px;
+            position: relative;
+            background: rgba(10, 0, 21, 0.5);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        /* PIE DE PÁGINA */
+        .last-update {
+            text-align: center;
+            padding: 20px;
+            background: rgba(74, 26, 128, 0.3);
+            border-radius: 15px;
+            color: #5dade2;
+            font-size: 1.1em;
+            border: 2px solid rgba(93, 173, 226, 0.3);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .tanks-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+                letter-spacing: 3px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tanks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card .number {
+                font-size: 2.5em;
+            }
+
+            .mars-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <svg class="mars-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="marsGradient" cx="35%" cy="35%">
+                            <stop offset="0%" style="stop-color:#ff8c5a;stop-opacity:1" />
+                            <stop offset="40%" style="stop-color:#e74c3c;stop-opacity:1" />
+                            <stop offset="80%" style="stop-color:#c0392b;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8b1a0f;stop-opacity:1" />
+                        </radialGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="48" fill="url(#marsGradient)" stroke="#ff6b4a" stroke-width="2"/>
+                    <circle cx="30" cy="35" r="10" fill="#a0321e" opacity="0.6"/>
+                    <circle cx="68" cy="42" r="7" fill="#a0321e" opacity="0.5"/>
+                    <circle cx="48" cy="68" r="12" fill="#a0321e" opacity="0.7"/>
+                    <circle cx="65" cy="65" r="6" fill="#8b1a0f" opacity="0.5"/>
+                    <ellipse cx="50" cy="50" rx="25" ry="4" fill="#7a1610" opacity="0.4" transform="rotate(-20 50 50)"/>
+                    <ellipse cx="50" cy="15" rx="18" ry="8" fill="#ffffff" opacity="0.4"/>
+                </svg>
+                BREATHE - MARS COLONY 💨
+            </h1>
+            <p class="subtitle">🚀 BASE MARS 2056 - Estado de Tanques de Oxígeno 🚀</p>
+        </header>
+
+        <!-- TARJETAS DE ESTADÍSTICAS -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <h3>Oxígeno Total</h3>
+                <div class="number" id="totalPoints">0</div>
+                <div class="icon">💨</div>
+            </div>
+            <div class="stat-card codes">
+                <h3>Códigos Activados</h3>
+                <div class="number" id="usedCodes">0</div>
+                <div class="icon">🔑</div>
+            </div>
+            <div class="stat-card progress">
+                <h3>Progreso Global</h3>
+                <div class="number" id="globalProgress">0%</div>
+                <div class="icon">📈</div>
+            </div>
+            <div class="stat-card leader">
+                <h3>Líder Actual</h3>
+                <div class="number" id="leaderName">-</div>
+                <div class="subtitle-text" id="leaderPoints">0 puntos</div>
+                <div class="icon">🏆</div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="main-content">
+            <!-- TANQUES DE OXÍGENO -->
+            <div class="tanks-section">
+                <h2>💨 Tanques de Oxígeno - Equipos</h2>
+                <div class="tanks-grid" id="tanksGrid"></div>
+            </div>
+
+            <!-- RANKING -->
+            <div class="ranking-section">
+                <h2>🏆 Ranking de Supervivencia</h2>
+                <div id="rankingList"></div>
+            </div>
+        </div>
+
+        <!-- GRÁFICA DE BARRAS -->
+        <div class="chart-section">
+            <h2>📊 Comparativa Visual - Niveles de Oxígeno</h2>
+            <div class="chart-container">
+                <canvas id="oxygenChart"></canvas>
+            </div>
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        <div class="last-update">
+            🕐 Última actualización: <span id="lastUpdate">--:--:--</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI",
+            authDomain: "breath-8f51d.firebaseapp.com",
+            databaseURL: "https://breath-8f51d-default-rtdb.firebaseio.com",
+            projectId: "breath-8f51d",
+            storageBucket: "breath-8f51d.firebasestorage.app",
+            messagingSenderId: "115092733788",
+            appId: "1:115092733788:web:908339b70a0f8113318b99"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        const allCourses = ['3º ESO A', '3º ESO B', '3º ESO C', '3º ESO D', '3º ESO E', '3º ESO F'];
+        let chart = null;
+
+        function calculateRanks(sortedCourses) {
+            const ranks = [];
+            let currentRank = 1;
+            
+            for (let i = 0; i < sortedCourses.length; i++) {
+                const [course, points] = sortedCourses[i];
+                
+                if (i > 0 && sortedCourses[i][1] === sortedCourses[i-1][1]) {
+                    ranks.push({ course, points, rank: ranks[i-1].rank });
+                } else {
+                    ranks.push({ course, points, rank: currentRank });
+                }
+                currentRank++;
+            }
+            
+            return ranks;
+        }
+
+        function getMedalByRank(rank) {
+            const medals = {
+                1: '🥇',
+                2: '🥈',
+                3: '🥉',
+                4: '4️⃣',
+                5: '5️⃣',
+                6: '6️⃣'
+            };
+            return medals[rank] || '📊';
+        }
+
+        function getClassByRank(rank) {
+            if (rank === 1) return 'first';
+            if (rank === 2) return 'second';
+            if (rank === 3) return 'third';
+            return '';
+        }
+
+        function updateChart(rankedCourses) {
+            const ctx = document.getElementById('oxygenChart').getContext('2d');
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const colors = [
+                'rgba(255, 215, 0, 0.8)',    // Oro - 1º
+                'rgba(192, 192, 192, 0.8)',  // Plata - 2º
+                'rgba(205, 127, 50, 0.8)',   // Bronce - 3º
+                'rgba(0, 212, 255, 0.8)',    // Cyan
+                'rgba(138, 43, 226, 0.8)',   // Púrpura
+                'rgba(255, 20, 147, 0.8)'    // Rosa
+            ];
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: rankedCourses.map(item => item.course),
+                    datasets: [{
+                        label: 'Puntos de Oxígeno',
+                        data: rankedCourses.map(item => item.points),
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.8', '1')),
+                        borderWidth: 3,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Ranking de Oxígeno por Equipo',
+                            color: '#00d4ff',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 0, 21, 0.9)',
+                            titleColor: '#ffd700',
+                            bodyColor: '#00d4ff',
+                            borderColor: '#00d4ff',
+                            borderWidth: 2,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.parsed.y + ' puntos de oxígeno';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 10,
+                                color: '#5dade2',
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(93, 173, 226, 0.2)',
+                                drawBorder: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Puntos de Oxígeno',
+                                color: '#00d4ff',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#ff1493',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        async function updateDisplay() {
+            try {
+                const snapshot = await db.ref('/').once('value');
+                const data = snapshot.val() || {};
+                
+                let coursePoints = {};
+                
+                const firebaseCourses = data.courses || {};
+                allCourses.forEach(course => {
+                    const courseKey = course.replace(/\s/g, '_');
+                    coursePoints[course] = firebaseCourses[courseKey] || 0; 
+                });
+
+                const usedCodes = data.usedCodes || [];
+                
+                const totalPoints = Object.values(coursePoints).reduce((sum, points) => sum + points, 0);
+                
+                // Actualizar estadísticas principales
+                document.getElementById('totalPoints').textContent = totalPoints;
+                document.getElementById('usedCodes').textContent = usedCodes.length;
+                
+                const globalProgress = Math.min(100, Math.floor((totalPoints / 1000) * 100));
+                document.getElementById('globalProgress').textContent = globalProgress + '%';
+                
+                const sortedCourses = Object.entries(coursePoints).sort((a, b) => b[1] - a[1]);
+                const rankedCourses = calculateRanks(sortedCourses);
+                
+                // Actualizar líder
+                if (rankedCourses.length > 0) {
+                    document.getElementById('leaderName').textContent = rankedCourses[0].course;
+                    document.getElementById('leaderPoints').textContent = rankedCourses[0].points + ' puntos';
+                }
+                
+                // Actualizar tanques
+                const tanksGrid = document.getElementById('tanksGrid');
+                tanksGrid.innerHTML = '';
+                
+                rankedCourses.forEach(({ course, points, rank }) => {
+                    const percentage = Math.min(100, Math.floor((points / 100) * 100));
+                    const medal = getMedalByRank(rank);
+                    const rankClass = getClassByRank(rank);
+                    
+                    const tankCard = document.createElement('div');
+                    tankCard.className = `tank-card ${rankClass}`;
+                    tankCard.innerHTML = `
+                        <div class="medal">${medal}</div>
+                        <div class="course-name">${course}</div>
+                        <div class="tank-container">
+                            <div class="oxygen-fill" style="height: ${percentage}%"></div>
+                            <div class="tank-percentage">${percentage}%</div>
+                        </div>
+                        <div class="tank-points">${points} pts</div>
+                    `;
+                    tanksGrid.appendChild(tankCard);
+                });
+                
+                // Actualizar ranking
+                const rankingList = document.getElementById('rankingList');
+                rankingList.innerHTML = '';
+                
+                rankedCourses.forEach(({ course, points, rank }) => {
+                    const rankClass = getClassByRank(rank);
+                    const medal = getMedalByRank(rank);
+                    const percentage = totalPoints > 0 ? Math.round((points / totalPoints) * 100) : 0;
+                    
+                    const rankItem = document.createElement('div');
+                    rankItem.className = `ranking-item ${rankClass}`;
+                    rankItem.innerHTML = `
+                        <div class="ranking-left">
+                            <div class="rank-position">${medal}</div>
+                            <div class="rank-course">${course}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="rank-points">${points}</div>
+                            <div class="percentage">${percentage}% del total</div>
+                        </div>
+                    `;
+                    rankingList.appendChild(rankItem);
+                });
+                
+                // Actualizar gráfica
+                updateChart(rankedCourses);
+                
+                // Actualizar timestamp
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('es-ES');
+                
+            } catch (error) {
+                console.error("Error al obtener datos de Firebase:", error);
+                document.getElementById('lastUpdate').textContent = 'Error de conexión (' + new Date().toLocaleTimeString('es-ES') + ')';
+            }
+        }
+
+        // Inicializar y actualizar cada 3 segundos
+        updateDisplay();
+        setInterval(updateDisplay, 3000);
+    </script>
+</body>
+</html>
