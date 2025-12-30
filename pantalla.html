@@ -122,8 +122,8 @@
         .tanks-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 18px;
+            margin-bottom: 20px;
         }
 
         .tank-card {
@@ -166,31 +166,31 @@
         }
 
         .course-name {
-            font-size: 1.3em;
+            font-size: 1.6em;
             font-weight: bold;
             color: #ff1493;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-align: center;
             text-shadow: 0 0 15px rgba(255, 20, 147, 0.7);
         }
 
         .medal {
-            font-size: 2em;
-            margin-bottom: 8px;
+            font-size: 2.8em;
+            margin-bottom: 10px;
             filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));
         }
 
         .tank-container {
             position: relative;
-            width: 120px;
-            height: 180px;
+            width: 140px;
+            height: 240px;
             border: 5px solid #00d4ff;
             border-radius: 15px;
             background: rgba(10, 0, 21, 0.9);
             overflow: visible;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.4),
                         inset 0 0 20px rgba(0, 0, 0, 0.7);
-            margin: 12px 0;
+            margin: 15px 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -209,7 +209,7 @@
         .tank-percentage {
             position: relative;
             z-index: 10;
-            font-size: 1.8em;
+            font-size: 2.2em;
             font-weight: bold;
             color: white;
             text-shadow: 
@@ -217,7 +217,7 @@
                 0 0 40px rgba(0, 212, 255, 1),
                 3px 3px 8px rgba(0, 0, 0, 1),
                 -2px -2px 8px rgba(0, 0, 0, 1);
-            padding: 10px;
+            padding: 12px;
             background: rgba(10, 0, 21, 0.6);
             border-radius: 10px;
         }
@@ -244,7 +244,7 @@
         }
 
         .points {
-            font-size: 1.4em;
+            font-size: 1.6em;
             color: #00d4ff;
             font-weight: bold;
             text-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
@@ -256,97 +256,9 @@
             margin-top: 5px;
         }
 
-        .ranking {
-            background: rgba(74, 26, 128, 0.4);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 20, 147, 0.5);
-            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
-        }
-
-        .ranking h2 {
-            background: linear-gradient(90deg, #00d4ff, #00bfff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.5em;
-            margin-bottom: 12px;
-            text-align: center;
-            filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.6));
-        }
-
-        .ranking-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .ranking-item {
-            background: rgba(45, 21, 96, 0.6);
-            padding: 12px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 2px solid rgba(138, 43, 226, 0.5);
-            transition: all 0.3s;
-        }
-
-        .ranking-item:hover {
-            border-color: #00d4ff;
-            transform: translateX(10px);
-            box-shadow: 0 5px 25px rgba(0, 212, 255, 0.4);
-        }
-
-        .ranking-item.first {
-            background: rgba(255, 215, 0, 0.2);
-            border-color: #ffd700;
-            box-shadow: 0 5px 25px rgba(255, 215, 0, 0.5);
-        }
-
-        .ranking-item.second {
-            background: rgba(192, 192, 192, 0.2);
-            border-color: #c0c0c0;
-            box-shadow: 0 5px 20px rgba(192, 192, 192, 0.4);
-        }
-
-        .ranking-item.third {
-            background: rgba(205, 127, 50, 0.2);
-            border-color: #cd7f32;
-            box-shadow: 0 5px 20px rgba(205, 127, 50, 0.4);
-        }
-
-        .ranking-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .rank-position {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #00d4ff;
-            min-width: 40px;
-            text-shadow: 0 0 15px rgba(0, 212, 255, 0.7);
-        }
-
-        .rank-course {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: white;
-        }
-
-        .rank-points {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #ff1493;
-            text-shadow: 0 0 12px rgba(255, 20, 147, 0.7);
-        }
-
         .last-update {
             text-align: center;
-            margin-top: 12px;
+            margin-top: 20px;
             color: #00bfff;
             font-size: 0.95em;
         }
@@ -665,11 +577,6 @@
 
         <div class="tanks-grid" id="tanksGrid"></div>
 
-        <div class="ranking">
-            <h2>🏆 RANKING DE SUPERVIVENCIA - EQUIPOS MARS</h2>
-            <div class="ranking-list" id="rankingList"></div>
-        </div>
-
         <div class="last-update">
             Última actualización: <span id="lastUpdate">--:--:--</span>
         </div>
@@ -785,29 +692,6 @@
                         </div>
                     `;
                     tanksGrid.appendChild(tankCard);
-                });
-                
-                const rankingList = document.getElementById('rankingList');
-                rankingList.innerHTML = '';
-                
-                rankedCourses.forEach(({ course, points, rank }) => {
-                    const rankClass = getClassByRank(rank);
-                    const medal = getMedalByRank(rank);
-                    const percentage = totalPoints > 0 ? Math.round((points / totalPoints) * 100) : 0;
-                    
-                    const rankItem = document.createElement('div');
-                    rankItem.className = `ranking-item ${rankClass}`;
-                    rankItem.innerHTML = `
-                        <div class="ranking-left">
-                            <div class="rank-position">${medal}</div>
-                            <div class="rank-course">${course}</div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div class="rank-points">${points} puntos</div>
-                            <div class="percentage">${percentage}% del total</div>
-                        </div>
-                    `;
-                    rankingList.appendChild(rankItem);
                 });
                 
                 const now = new Date();
