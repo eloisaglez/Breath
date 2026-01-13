@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathe - Estudiantes</title> 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0015, #1a0b3d, #2d1560, #4a1a80);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(138, 43, 226, 0.2), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 191, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(255, 20, 147, 0.1), transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(74, 26, 128, 0.5);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
+            border: 2px solid rgba(255, 140, 100, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .subtitle-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin: 0;
+            background: linear-gradient(90deg, #ff8c00, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+            letter-spacing: 3px;
+        }
+
+        .astronaut-icon {
+            font-size: 60px;
+            line-height: 1;
+            filter: drop-shadow(0 0 20px rgba(93, 173, 226, 0.7));
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #5dade2;
+            text-shadow: 0 0 5px rgba(93, 173, 226, 0.4);
+        }
+
+        .card {
+            background: rgba(74, 26, 128, 0.4);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #5dade2;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-shadow: 0 0 5px rgba(93, 173, 226, 0.3);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #5dade2;
+            border-radius: 10px;
+            background: rgba(10, 0, 21, 0.8);
+            color: white;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #ffa500;
+            box-shadow: 0 0 15px rgba(93, 173, 226, 0.3);
+            transform: scale(1.02);
+        }
+
+        select option {
+            background: #1a0b3d;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #3498db, #5dade2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(93, 173, 226, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .success {
+            background: rgba(93, 173, 226, 0.25);
+            border: 2px solid #5dade2;
+            color: #a0d8f0;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .error {
+            background: rgba(255, 140, 90, 0.25);
+            border: 2px solid #ff8c5a;
+            color: #ffb088;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .info-box {
+            background: rgba(93, 173, 226, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            border-left: 4px solid #5dade2;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+            color: #a0d8f0;
+            font-size: 1em;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 165, 0, 0.15);
+            border-radius: 10px;
+            border: 2px solid rgba(255, 165, 0, 0.4);
+        }
+
+        .link a {
+            color: #ffb347;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .link a:hover {
+            color: #5dade2;
+            text-decoration: underline;
+        }
+
+        h2 {
+            color: #ffb347;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 179, 71, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6em;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+
+            .astronaut-icon {
+                font-size: 45px;
+            }
+
+            .subtitle {
+                font-size: 0.95em;
+            }
+
+            .header-content {
+                gap: 15px;
+            }
+
+            .subtitle-row {
+                gap: 10px;
+                flex-direction: column;
+            }
+
+            label {
+                font-size: 1.2em;
+            }
+
+            select, input {
+                font-size: 1.05em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>PROYECTO BREATHE</h1>
+                <div class="subtitle-row">
+                    <div class="astronaut-icon">👨‍🚀</div>
+                    <p class="subtitle">Ayuda a tu curso a conseguir más oxígeno</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="card">
+            <h2>Introduce tu código</h2>
+            
+            <form id="codeForm">
+                <div class="form-group">
+                    <label for="courseSelect">🚀 Selecciona tu curso:</label>
+                    <select id="courseSelect" required>
+                        <option value="">-- Elige tu curso --</option>
+                        <option value="3º ESO A">3º ESO A</option>
+                        <option value="3º ESO B">3º ESO B</option>
+                        <option value="3º ESO C">3º ESO C</option>
+                        <option value="3º ESO D">3º ESO D</option>
+                        <option value="3º ESO E">3º ESO E</option>
+                        <option value="3º ESO F">3º ESO F</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="codeInput">🔑 Código de tarea:</label>
+                    <input 
+                        type="text" 
+                        id="codeInput" 
+                        placeholder="Ej: MARS-AB1234" 
+                        required
+                        style="text-transform: uppercase;">
+                </div>
+
+                <button type="submit">💨 Añadir Oxígeno</button>
+            </form>
+
+            <div id="message"></div>
+
+            <div class="info-box">
+                <p><strong>ℹ️ Cómo funciona:</strong></p>
+                <p>✅ Completa las tareas asignadas</p>
+                <p>✅ Recibe códigos de tus profesores</p>
+                <p>✅ Introduce el código aquí</p>
+                <p>✅ ¡Suma oxígeno para tu curso!</p>
+            </div>
+
+            <div class="link">
+                <a href="pantalla.html" target="_blank">👁️ Ver pantalla de puntuación</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRbu8NsRZuvn1hVKoAYztaeyXEG_9g0KI",
+            authDomain: "breath-8f51d.firebaseapp.com",
+            databaseURL: "https://breath-8f51d-default-rtdb.firebaseio.com",
+            projectId: "breath-8f51d",
+            storageBucket: "breath-8f51d.firebasestorage.app",
+            messagingSenderId: "115092733788",
+            appId: "1:115092733788:web:908339b70a0f8113318b99"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function normalizeCourseName(course) {
+            return course.replace(/\s/g, '_');
+        }
+
+        document.getElementById('codeInput').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        async function loadValidCodes() {
+            try {
+                // Leer códigos desde Firebase
+                const snapshot = await db.ref('validCodes').once('value');
+                const validCodesData = snapshot.val();
+                
+                if (!validCodesData) {
+                    console.error('No hay códigos válidos en Firebase');
+                    return null;
+                }
+                
+                return validCodesData;
+            } catch (error) {
+                console.error('Error cargando códigos desde Firebase:', error);
+                return null;
+            }
+        }
+        
+        async function getDataFromDB() {
+            const snapshot = await db.ref('/').once('value');
+            let data = snapshot.val();
+            
+            if (!data || !data.courses || !data.usedCodes) {
+                data = {
+                    courses: {
+                        '3º_ESO_A': 0,
+                        '3º_ESO_B': 0,
+                        '3º_ESO_C': 0,
+                        '3º_ESO_D': 0,
+                        '3º_ESO_E': 0,
+                        '3º_ESO_F': 0
+                    },
+                    usedCodes: []
+                };
+                await db.ref('/').set(data);
+            }
+            return data;
+        }
+
+        document.getElementById('codeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const course = document.getElementById('courseSelect').value;
+            const code = document.getElementById('codeInput').value.trim().toUpperCase();
+            const messageDiv = document.getElementById('message');
+            const courseKey = normalizeCourseName(course);
+            
+            if (course === "") {
+                messageDiv.innerHTML = '<div class="message error">❌ Por favor, selecciona tu curso.</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            let data;
+            try {
+                data = await getDataFromDB();
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="message error">❌ Error de conexión con la base de datos. Inténtalo de nuevo.</div>';
+                console.error(error);
+                return;
+            }
+            
+            if (data.usedCodes && data.usedCodes.includes(code)) {
+                messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado por alguien</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            const validCodes = await loadValidCodes();
+            
+            if (!validCodes || !validCodes[code]) {
+                messageDiv.innerHTML = '<div class="message error">❌ Código inválido. Verifica que lo hayas escrito bien</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            const codeObj = validCodes[code];
+            
+            // Verificar si el código ya fue usado
+            if (codeObj.usado === true) {
+                messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
+                return;
+            }
+            
+            const currentPoints = data.courses[courseKey] || 0; 
+            const newTotalPoints = currentPoints + codeObj.puntos;
+            
+            try {
+                await db.ref('courses/' + courseKey).set(newTotalPoints);
+                
+                // Marcar el código como usado en Firebase
+                await db.ref('validCodes/' + code + '/usado').set(true);
+                
+                // También agregarlo a la lista de códigos usados
+                if (!data.usedCodes) data.usedCodes = [];
+                data.usedCodes.push(code);
+                await db.ref('usedCodes').set(data.usedCodes);
+                
+                messageDiv.innerHTML = `
+                    <div class="message success">
+                        ✅ ¡Excelente ${course}! 
+                        <br>Has ganado <strong>${codeObj.puntos} puntos</strong> de oxígeno
+                        <br><em>Actividad: ${codeObj.actividad}</em>
+                    </div>
+                `;
+
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="message error">❌ Error al guardar puntos en la nube.</div>';
+                console.error("Error de escritura en Firebase:", error);
+                return;
+            }
+
+            document.getElementById('codeInput').value = '';
+            document.getElementById('courseSelect').selectedIndex = 0;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 6000);
+        });
+        
+        getDataFromDB(); 
+    </script>
+</body>
+</html>
