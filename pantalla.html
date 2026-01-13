@@ -486,7 +486,7 @@
                 document.getElementById('totalPoints').textContent = totalPoints;
                 document.getElementById('usedCodes').textContent = usedCodes.length;
                 
-                const globalProgress = Math.min(100, Math.floor((totalPoints / 6000) * 100));
+                const globalProgress = Math.min(100, ((totalPoints / 6000) * 100).toFixed(1));
                 document.getElementById('globalProgress').textContent = globalProgress + '%';
                 
                 const sortedCourses = Object.entries(coursePoints).sort((a, b) => b[1] - a[1]);
@@ -497,7 +497,9 @@
                 tanksGrid.innerHTML = '';
                 
                 rankedCourses.forEach(({ course, points, rank }) => {
-                    const percentage = Math.min(100, Math.floor((points / 1000) * 100));
+                    // Calcular porcentaje con 1 decimal
+                    const percentage = Math.min(100, ((points / 1000) * 100).toFixed(1));
+                    const percentageForHeight = Math.min(100, (points / 1000) * 100); // Para la altura sin redondear
                     const medal = getMedalByRank(rank);
                     const rankClass = getClassByRank(rank);
                     
@@ -507,13 +509,13 @@
                         <div class="medal">${medal}</div>
                         <div class="course-name">${course}</div>
                         <div class="tank-container">
-                            <div class="oxygen-fill" style="height: ${percentage}%"></div>
+                            <div class="oxygen-fill" style="height: ${percentageForHeight}%"></div>
                             <div class="tank-percentage">${percentage}%</div>
                         </div>
                         <div class="tank-stats">
                             <div class="points">${points} pts</div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                                <div class="progress-fill" style="width: ${percentageForHeight}%"></div>
                                 <div class="progress-text">${percentage}%</div>
                             </div>
                         </div>
