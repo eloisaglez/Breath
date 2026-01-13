@@ -321,7 +321,7 @@
                     <input 
                         type="text" 
                         id="codeInput" 
-                        placeholder="Ej: MARS-AB1234" 
+                        placeholder="Ej: ABC12345" 
                         required
                         style="text-transform: uppercase;">
                 </div>
@@ -340,7 +340,7 @@
             </div>
 
             <div class="link">
-                <a href="pantalla.html" target="_blank">👁️ Ver pantalla de puntuación</a>
+                <a href="pantalla_normalizada.html" target="_blank">👁️ Ver pantalla de puntuación</a>
             </div>
         </div>
     </div>
@@ -362,6 +362,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Convertir nombre de curso a formato Firebase
         function normalizeCourseName(course) {
             return course.replace(/\s/g, '_');
         }
@@ -369,45 +370,6 @@
         document.getElementById('codeInput').addEventListener('input', function(e) {
             e.target.value = e.target.value.toUpperCase();
         });
-
-        async function loadValidCodes() {
-            try {
-                // Leer códigos desde Firebase
-                const snapshot = await db.ref('validCodes').once('value');
-                const validCodesData = snapshot.val();
-                
-                if (!validCodesData) {
-                    console.error('No hay códigos válidos en Firebase');
-                    return null;
-                }
-                
-                return validCodesData;
-            } catch (error) {
-                console.error('Error cargando códigos desde Firebase:', error);
-                return null;
-            }
-        }
-        
-        async function getDataFromDB() {
-            const snapshot = await db.ref('/').once('value');
-            let data = snapshot.val();
-            
-            if (!data || !data.courses || !data.usedCodes) {
-                data = {
-                    courses: {
-                        '3º_ESO_A': 0,
-                        '3º_ESO_B': 0,
-                        '3º_ESO_C': 0,
-                        '3º_ESO_D': 0,
-                        '3º_ESO_E': 0,
-                        '3º_ESO_F': 0
-                    },
-                    usedCodes: []
-                };
-                await db.ref('/').set(data);
-            }
-            return data;
-        }
 
         document.getElementById('codeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -417,81 +379,86 @@
             const messageDiv = document.getElementById('message');
             const courseKey = normalizeCourseName(course);
             
+            console.log('=== DEBUG ===');
+            console.log('Curso seleccionado:', course);
+            console.log('Curso normalizado:', courseKey);
+            console.log('Código introducido:', code);
+            
             if (course === "") {
                 messageDiv.innerHTML = '<div class="message error">❌ Por favor, selecciona tu curso.</div>';
                 setTimeout(() => messageDiv.innerHTML = '', 4000);
                 return;
             }
             
-            let data;
+            // Verificar que el código existe en Firebase
             try {
-                data = await getDataFromDB();
-            } catch (error) {
-                messageDiv.innerHTML = '<div class="message error">❌ Error de conexión con la base de datos. Inténtalo de nuevo.</div>';
-                console.error(error);
-                return;
-            }
-            
-            if (data.usedCodes && data.usedCodes.includes(code)) {
-                messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado por alguien</div>';
-                setTimeout(() => messageDiv.innerHTML = '', 4000);
-                return;
-            }
-            
-            const validCodes = await loadValidCodes();
-            
-            if (!validCodes || !validCodes[code]) {
-                messageDiv.innerHTML = '<div class="message error">❌ Código inválido. Verifica que lo hayas escrito bien</div>';
-                setTimeout(() => messageDiv.innerHTML = '', 4000);
-                return;
-            }
-            
-            const codeObj = validCodes[code];
-            
-            // Verificar si el código ya fue usado
-            if (codeObj.usado === true) {
-                messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado</div>';
-                setTimeout(() => messageDiv.innerHTML = '', 4000);
-                return;
-            }
-            
-            const currentPoints = data.courses[courseKey] || 0; 
-            const newTotalPoints = currentPoints + codeObj.puntos;
-            
-            try {
-                await db.ref('courses/' + courseKey).set(newTotalPoints);
+                const codeSnapshot = await db.ref('validCodes/' + code).once('value');
+                const codeData = codeSnapshot.val();
                 
-                // Marcar el código como usado en Firebase
+                console.log('Código encontrado en Firebase:', codeData);
+                
+                if (!codeData) {
+                    messageDiv.innerHTML = '<div class="message error">❌ Código inválido. Verifica que lo hayas escrito bien</div>';
+                    setTimeout(() => messageDiv.innerHTML = '', 4000);
+                    return;
+                }
+                
+                // Verificar si ya fue usado
+                if (codeData.usado === true) {
+                    messageDiv.innerHTML = '<div class="message error">❌ Este código ya ha sido utilizado</div>';
+                    setTimeout(() => messageDiv.innerHTML = '', 4000);
+                    return;
+                }
+                
+                // IMPORTANTE: Verificar que el curso seleccionado coincida con el del código
+                if (codeData.clase !== course) {
+                    messageDiv.innerHTML = `<div class="message error">❌ Este código pertenece a ${codeData.clase}, no a ${course}</div>`;
+                    setTimeout(() => messageDiv.innerHTML = '', 4000);
+                    return;
+                }
+                
+                // Obtener puntos actuales del curso
+                const courseSnapshot = await db.ref('courses/' + courseKey).once('value');
+                const currentPoints = courseSnapshot.val() || 0;
+                const newPoints = currentPoints + codeData.puntos;
+                
+                console.log('Puntos actuales:', currentPoints);
+                console.log('Puntos a sumar:', codeData.puntos);
+                console.log('Puntos totales:', newPoints);
+                
+                // Actualizar puntos
+                await db.ref('courses/' + courseKey).set(newPoints);
+                
+                // Marcar código como usado
                 await db.ref('validCodes/' + code + '/usado').set(true);
                 
-                // También agregarlo a la lista de códigos usados
-                if (!data.usedCodes) data.usedCodes = [];
-                data.usedCodes.push(code);
-                await db.ref('usedCodes').set(data.usedCodes);
+                // Agregar a lista de códigos usados
+                const usedCodesSnapshot = await db.ref('usedCodes').once('value');
+                let usedCodes = usedCodesSnapshot.val() || [];
+                usedCodes.push(code);
+                await db.ref('usedCodes').set(usedCodes);
                 
                 messageDiv.innerHTML = `
                     <div class="message success">
                         ✅ ¡Excelente ${course}! 
-                        <br>Has ganado <strong>${codeObj.puntos} puntos</strong> de oxígeno
-                        <br><em>Actividad: ${codeObj.actividad}</em>
+                        <br>Has ganado <strong>${codeData.puntos} puntos</strong> de oxígeno
+                        <br><em>${codeData.actividad} - ${codeData.grupo}</em>
                     </div>
                 `;
-
+                
+                document.getElementById('codeInput').value = '';
+                document.getElementById('courseSelect').selectedIndex = 0;
+                
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 6000);
+                
             } catch (error) {
-                messageDiv.innerHTML = '<div class="message error">❌ Error al guardar puntos en la nube.</div>';
-                console.error("Error de escritura en Firebase:", error);
-                return;
+                console.error('Error:', error);
+                messageDiv.innerHTML = '<div class="message error">❌ Error de conexión con Firebase. Intenta de nuevo.</div>';
+                setTimeout(() => messageDiv.innerHTML = '', 4000);
             }
-
-            document.getElementById('codeInput').value = '';
-            document.getElementById('courseSelect').selectedIndex = 0;
-            
-            setTimeout(() => {
-                messageDiv.innerHTML = '';
-            }, 6000);
         });
-        
-        getDataFromDB(); 
     </script>
 </body>
 </html>
