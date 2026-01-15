@@ -19,7 +19,7 @@ python subir_firebase.py
 O importar manualmente: Firebase Console → Realtime Database → Importar JSON
 
 ### 3. Abrir Interfaces
-- **Alumnos:** `index_FINAL_v2.html`
+- **Alumnos:** `index.html`
 - **Pantalla:** `pantalla_normalizada_FINAL.html`
 
 ### 4. Distribuir Códigos
@@ -30,8 +30,8 @@ Entregar archivos de `codigos_por_asignatura/` a cada profesor.
 ## 📂 Estructura
 
 ```
-📄 index_FINAL_v2.html              → Interfaz alumnos
-📄 pantalla_normalizada_FINAL.html  → Visualización
+📄 index.html              → Interfaz alumnos
+📄 pantalla_normalizada.html  → Visualización
 🐍 generar_codigos.py               → Genera códigos
 🐍 subir_firebase.py                → Sube a Firebase
 🐍 resetear_firebase.py             → Resetea todo
