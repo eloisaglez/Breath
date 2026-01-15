@@ -354,7 +354,7 @@
                 </svg>
                 BREATHE - MARS COLONY 💨
             </h1>
-            <p class="subtitle">BASE MARS 2056 - Estado de Tanques de Oxígeno</p>
+            <p class="subtitle" id="subtitle">BASE MARS 2056 - Estado de Tanques de Oxígeno</p>
             <div class="stats">
                 <div class="stat-item">
                     <div>Oxígeno Total</div>
@@ -440,7 +440,12 @@
             return ranks;
         }
 
-        function getMedalByRank(rank) {
+        function getMedalByRank(rank, points) {
+            // Si no hay puntos, mostrar cohete (misión por comenzar)
+            if (points === 0) {
+                return '🚀';
+            }
+            
             const medals = {
                 1: '🥇',
                 2: '🥈',
@@ -484,6 +489,14 @@
                 
                 const totalPoints = Object.values(coursePoints).reduce((sum, points) => sum + points, 0);
                 
+                // Cambiar mensaje del subtítulo según el estado
+                const subtitleElement = document.getElementById('subtitle');
+                if (totalPoints === 0) {
+                    subtitleElement.textContent = '💨 El oxígeno del planeta se agota. ¿Qué clase salvará a la colonia?';
+                } else {
+                    subtitleElement.textContent = 'BASE MARS 2056 - Estado de Tanques de Oxígeno';
+                }
+                
                 document.getElementById('totalPoints').textContent = totalPoints;
                 document.getElementById('usedCodes').textContent = usedCodes.length;
                 
@@ -501,7 +514,7 @@
                     // Calcular porcentaje con 1 decimal
                     const percentage = Math.min(100, ((points / 1000) * 100).toFixed(1));
                     const percentageForHeight = Math.min(100, (points / 1000) * 100); // Para la altura sin redondear
-                    const medal = getMedalByRank(rank);
+                    const medal = getMedalByRank(rank, points); // Pasar puntos también
                     const rankClass = getClassByRank(rank);
                     
                     const tankCard = document.createElement('div');
