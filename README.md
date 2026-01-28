@@ -20,7 +20,7 @@ O importar manualmente: Firebase Console → Realtime Database → Importar JSON
 
 ### 3. Abrir Interfaces
 - **Alumnos:** `index.html`
-- **Pantalla:** `pantalla_normalizada_FINAL.html`
+- **Pantalla:** `pantalla_normalizada.html`
 
 ### 4. Distribuir Códigos
 Entregar archivos de `codigos_por_asignatura/` a cada profesor.
