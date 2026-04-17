@@ -32,6 +32,6 @@ El consumo pasó de **~4 GB/día** a **~65 MB/día**.
 
 ## ⚠️ Warning: versiones antiguas de la pantalla de puntuación
 
-El repositorio puede contener versiones antiguas de `pantalla_normalizada.html` con el bug descrito arriba. **No usar ninguna versión anterior a abril 2026.** La versión correcta es `pantalla_normalizada-2.html` (o la que la sustituya).
+El repositorio puede contener versiones antiguas de `pantalla_normalizada.html` con el bug descrito arriba. **No usar ninguna versión anterior a abril 2026.** 
 
 Si se detecta un consumo anómalo en Firebase, revisar primero la pestaña **Uso** en la consola de Firebase → Realtime Database y comprobar si las descargas diarias superan los 100 MB.
